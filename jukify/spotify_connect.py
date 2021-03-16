@@ -1,6 +1,7 @@
 from flask import (Blueprint, jsonify, request, redirect, session)
 
 import tekore as tk
+from . settings import settings
 
 client_id, client_secret, redirect_uri = tk.config_from_environment()
 
@@ -61,7 +62,7 @@ def get_or_update_token(redirect, refresh_token):
 
 @bp.route('/playlist', methods=('GET', 'POST'))
 def playlist():
-    token = get_or_update_token("/spotify/playlist",'')
+    token = get_or_update_token("/spotify/playlist",settings['spotify']['token'])
     spotify = tk.Spotify(token)
-    tracks = spotify.playlist_items('6brdBoGEtbthpJ8hyddIiV', market='SE',limit=10, fields='items(track(uri,duration_ms,name,artists(name)))')
+    tracks = spotify.playlist_items(settings['spotify']['playlist'], market='SE',limit=10, fields='items(track(uri,duration_ms,name,artists(name)))')
     return jsonify(tracks)
