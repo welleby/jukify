@@ -22,8 +22,8 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    from . import spotify_connect
-    app.register_blueprint(spotify_connect.bp)
+    from . import spotify_REST
+    app.register_blueprint(spotify_REST.bp)
 
     # a simple page that says hello
     @app.route('/')
