@@ -24,7 +24,21 @@ def play_tracks():
     try:
         if 'track_id' not in request.args:
             return "No tracks supplied", 400
-        return service.play_tracks(request.args.get('track_id'))
+        service.play_tracks(request.args.get('track_id'))
+        return '',204
+    except TokenError:
+        return redirect(auth.url, code=302)
+    except tk.NotFound as err:
+        return jsonify(err.args), 404
+
+# callback called from spotify OAuth2 flow
+@bp.route('/jukebox/play', methods=('GET', 'POST'))
+def jukebox_play():
+    try:
+        if 'index' not in request.args:
+            return "No index supplied", 400
+        service.play_track_from_playlist(request.args.get('index'))
+        return '',204
     except TokenError:
         return redirect(auth.url, code=302)
     except tk.NotFound as err:
@@ -33,13 +47,13 @@ def play_tracks():
 @bp.route('/playlist', methods=('GET', 'POST'))
 def get_playlist():
     try:
-        return service.get_playlist()
+        return jsonify(service.get_playlist())
     except TokenError:
         return redirect(auth.url, code=302)
 
 @bp.route('/devices', methods=(['GET']))
 def get_devices():
     try:
-        return service.get_devices()
+        return jsonify(service.get_devices())
     except TokenError:
         return redirect(auth.url, code=302)

@@ -47,7 +47,17 @@ class SpotifyService:
         try:
             spotify = self.__get_spotify()
             devices = spotify.playback_start_tracks([tracks], device_id=settings['spotify']['device_id'])
-            return jsonify(spotify.playback_devices())
+            return
+        except MissingToken:
+            raise TokenError("Missing Token")
+
+    def play_track_from_playlist(self,index):
+        try:
+            tracks = self.get_playlist()
+            spotify = self.__get_spotify()
+            track = tracks['items'][int(index)%len(tracks['items'])]['track']
+            devices = spotify.playback_start_tracks([track['id']], device_id=settings['spotify']['device_id'])
+            return
         except MissingToken:
             raise TokenError("Missing Token")
 
@@ -55,7 +65,7 @@ class SpotifyService:
         try:
             spotify = self.__get_spotify()
             tracks = spotify.playlist_items(settings['spotify']['playlist'], market='SE',limit=10, fields='items(track(id,duration_ms,name,artists(name)))')
-            return jsonify(tracks)
+            return tracks
         except MissingToken:
             raise TokenError("Missing Token")
 
@@ -63,7 +73,7 @@ class SpotifyService:
         try:
             spotify = self.__get_spotify()
             devices = spotify.playback_devices()
-            return jsonify(devices)
+            return devices
         except MissingToken:
             raise TokenError("Missing Token")
 
