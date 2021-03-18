@@ -27,7 +27,7 @@ def play_tracks():
         service.play_tracks(request.args.get('track_id'))
         return '',204
     except TokenError:
-        return redirect(auth.url, code=302)
+        return redirect(service.get_auth_url(), code=302)
     except tk.NotFound as err:
         return jsonify(err.args), 404
 
@@ -40,7 +40,7 @@ def jukebox_play():
         service.play_track_from_playlist(request.args.get('index'))
         return '',204
     except TokenError:
-        return redirect(auth.url, code=302)
+        return redirect(service.get_auth_url(), code=302)
     except tk.NotFound as err:
         return jsonify(err.args), 404
 
@@ -49,11 +49,11 @@ def get_playlist():
     try:
         return jsonify(service.get_playlist())
     except TokenError:
-        return redirect(auth.url, code=302)
+        return redirect(service.get_auth_url(), code=302)
 
 @bp.route('/devices', methods=(['GET']))
 def get_devices():
     try:
         return jsonify(service.get_devices())
     except TokenError:
-        return redirect(auth.url, code=302)
+        return redirect(service.get_auth_url(), code=302)
